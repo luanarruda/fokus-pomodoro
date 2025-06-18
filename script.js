@@ -18,7 +18,9 @@ const startPauseBtn = document.querySelector('#start-pause');
 
 let intervaloId = null;
 
-
+const audioPlay = new Audio('/sons/play.wav');
+const audioPausa = new Audio('/sons/pause.mp3');
+const audioTempoFinalizado = new Audio('./sons/beep.mp3')
 
 musicaFocoInput.addEventListener('change', () => {
 	if(musica.paused) {
@@ -69,8 +71,9 @@ function alterarContexto(contexto) {
 
 const contagemRegressiva = () => {
 	if(tempoDecorridoEmSegundos <= 0) {
-		zerar();
+		audioTempoFinalizado.play();
 		alert('Tempo esgotado!');
+		zerar();
 		return;
 	}
 	tempoDecorridoEmSegundos -= 1
@@ -81,9 +84,11 @@ startPauseBtn.addEventListener('click', iniciarOuPausar);
 
 function iniciarOuPausar() {
 	if(intervaloId) {
+		audioPausa.play();
 		zerar();
 		return;
 	}
+	audioPlay.play();
 	intervaloId = setInterval(contagemRegressiva, 1000);
 }
 
