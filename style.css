@@ -326,9 +326,6 @@ h1, h2, h3, h4, h5, h6 {
     }
 }
 
-.hidden {
-    display: none;
-}
 
 .app__section-task-container {
     display: flex;
@@ -452,6 +449,16 @@ h1, h2, h3, h4, h5, h6 {
     font-weight: 600;
     line-height: 150%; 
     font-family: Montserrat;
+
+     max-height: 0;
+    opacity: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease, opacity 0.3s ease;
+}
+
+.app__form-add-task.show{
+  max-height: 500px; /* valor suficiente para o formulário */
+  opacity: 1;
 }
 
 .app__form-label {
