@@ -1,120 +1,120 @@
 const html = document.querySelector('html');
-const focoBtn = document.querySelector('.app__card-button--foco');
-const curtoBtn = document.querySelector('.app__card-button--curto');
-const longoBtn = document.querySelector('.app__card-button--longo');
+
+const botaoFoco = document.querySelector('.app__card-button--foco');
+const botaoCurto = document.querySelector('.app__card-button--curto');
+const botaoLongo = document.querySelector('.app__card-button--longo');
 
 const banner = document.querySelector('.app__image');
 const titulo = document.querySelector('.app__title');
-
-// Remover a classe 'active' de todos os botões
 const botoes = document.querySelectorAll('.app__card-button');
 
 const musicaFocoInput = document.querySelector('#alternar-musica');
 const musica = new Audio('/sons/luna-rise-part-one.mp3');
 musica.loop = true;
 
-let tempoDecorridoEmSegundos = 1500  
-const startPauseBtn = document.querySelector('#start-pause');
-
-let intervaloId = null;
-
-const audioPlay = new Audio('/sons/play.wav');
-const audioPausa = new Audio('/sons/pause.mp3');
-const audioTempoFinalizado = new Audio('./sons/beep.mp3');
-const iniciarOuPausarBtn = document.querySelector('#start-pause span');	
- 
-const iniciarOuPausarBtIcone = document.querySelector(".app__card-primary-butto-icon")
+const botaoStartPause = document.querySelector('#start-pause');
+const textoStartPause = document.querySelector('#start-pause span');
+const iconeStartPause = document.querySelector('.app__card-primary-butto-icon');
 const tempoNaTela = document.querySelector('#timer');
 
-musicaFocoInput.addEventListener('change', () => {
-	if(musica.paused) {
-		musica.play();
-	} else {
-		musica.pause();
+const audioPlay = new Audio('/sons/play.wav');
+const audioPause = new Audio('/sons/pause.mp3');
+const audioTempoFinalizado = new Audio('./sons/beep.mp3');
+
+let tempoDecorridoEmSegundos = 1500;
+let intervaloId = null;
+
+const textos = {
+	foco: {
+		titulo: `Otimize sua produtividade, <br>
+		<strong class="app__title-strong">mergulha no que importa.</strong>`
+	},
+	'descanso-curto': {
+		titulo: `Que tal dar uma respirada?, <br>
+		<strong class="app__title-strong">Faça uma pausa curta.</strong>`
+	},
+	'descanso-longo': {
+		titulo: `Hora de voltar à superfície. <br>
+		<strong class="app__title-strong">Faça uma pausa longa.</strong>`
 	}
-});
+};
 
-focoBtn.addEventListener('click', () => {
-tempoDecorridoEmSegundos = 1500; 
- alterarContexto('foco');
- focoBtn.classList.add('active');
-});
+// ----- Funções principais -----
 
-curtoBtn.addEventListener('click', () => {
-  tempoDecorridoEmSegundos = 300	;
-  alterarContexto('descanso-curto');
-  curtoBtn.classList.add('active');
-});
-
-longoBtn.addEventListener('click', () => {
-  tempoDecorridoEmSegundos = 900;
-  alterarContexto('descanso-longo');
-  longoBtn.classList.add('active');
-});
+function configurarBotao(botao, contexto, tempo) {
+	botao.addEventListener('click', () => {
+		tempoDecorridoEmSegundos = tempo;
+		alterarContexto(contexto);
+		botao.classList.add('active');
+	});
+}
 
 function alterarContexto(contexto) {
 	mostrarTempo();
-	botoes.forEach(function(contexto) {
-		contexto.classList.remove('active');
-	});
+	botoes.forEach((botao) => botao.classList.remove('active'));
+	
 	html.setAttribute('data-contexto', contexto);
 	banner.setAttribute('src', `imagens/${contexto}.png`);
-	switch (contexto) {
-		case 'foco':
-			titulo.innerHTML = `Otimize sua produtividade, <br>
-			<strong class = "app__title-strong">mergulha no que importa.</strong>`;
-			break;
-		case 'descanso-curto':
-			titulo.innerHTML = `Que tal dar uma respirada?, <br>
-			<strong class = "app__title-strong">Faça uma pausa curta.</strong>`;
-			break;
-		case 'descanso-longo':
-			titulo.innerHTML = `Hora de voltar a superficie. <br>
-			<strong class = "app__title-strong">Faça uma pau longa.</strong>`;
-			
-			default:
-			break;
-		
-}}
+	titulo.innerHTML = textos[contexto].titulo;
+}
 
-const contagemRegressiva = () => {
-	if(tempoDecorridoEmSegundos <= 0) {
+function iniciarOuPausar() {
+	if (intervaloId) {
+		audioPause.play();
+		zerar();
+		return;
+	}
+
+	audioPlay.play();
+	intervaloId = setInterval(contagemRegressiva, 1000);
+	textoStartPause.textContent = 'Pausar';
+	iconeStartPause.setAttribute('src', 'imagens/pause.png');
+}
+
+function zerar() {
+	clearInterval(intervaloId);
+	textoStartPause.textContent = 'Iniciar';
+	iconeStartPause.setAttribute('src', 'imagens/play_arrow.png');
+	intervaloId = null;
+}
+
+function contagemRegressiva() {
+	if (tempoDecorridoEmSegundos <= 0) {
 		audioTempoFinalizado.play();
 		alert('Tempo esgotado!');
 		zerar();
 		return;
 	}
-	tempoDecorridoEmSegundos -= 1
-	mostrarTempo()
+
+	tempoDecorridoEmSegundos -= 1;
+	mostrarTempo();
 }
 
-startPauseBtn.addEventListener('click', iniciarOuPausar);
-
-function iniciarOuPausar() {
-	if(intervaloId) {
-		audioPausa.play();
-		zerar();
-		return;
-		
-	}
-	audioPlay.play();
-	intervaloId = setInterval(contagemRegressiva, 1000);
-	iniciarOuPausarBtn.textContent = 'Pausar';
-	iniciarOuPausarBtIcone.setAttribute('src', 'imagens/pause.png');
-
-}
-
-function zerar() {
-	clearInterval(intervaloId);
-	iniciarOuPausarBtn.textContent = 'Iniciar';
-	iniciarOuPausarBtIcone.setAttribute('src', 'imagens/play_arrow.png')
-	intervaloId = null;
-}
-
-function mostrarTempo(){
-	const tempo = new Date(tempoDecorridoEmSegundos * 1000)
-	const tempoFormatado = tempo.toLocaleTimeString('pt-BR', {minute: '2-digit', second: '2-digit'});
+function mostrarTempo() {
+	const tempo = new Date(tempoDecorridoEmSegundos * 1000);
+	const tempoFormatado = tempo.toLocaleTimeString('pt-BR', {
+		minute: '2-digit',
+		second: '2-digit'
+	});
 	tempoNaTela.innerHTML = `${tempoFormatado}`;
 }
 
+// ----- Eventos -----
+
+musicaFocoInput.addEventListener('change', () => {
+	if (musica.paused) {
+		musica.play().catch(() => console.log('Erro ao tocar música'));
+	} else {
+		musica.pause();
+	}
+});
+
+botaoStartPause.addEventListener('click', iniciarOuPausar);
+
+// Configuração dos botões de contexto
+configurarBotao(botaoFoco, 'foco', 1500);
+configurarBotao(botaoCurto, 'descanso-curto', 300);
+configurarBotao(botaoLongo, 'descanso-longo', 900);
+
+// ----- Inicialização -----
 mostrarTempo();
