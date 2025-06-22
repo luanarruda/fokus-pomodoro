@@ -82,6 +82,11 @@ function contagemRegressiva() {
 	if (tempoDecorridoEmSegundos <= 0) {
 		audioTempoFinalizado.play();
 		alert('Tempo esgotado!');
+		const focoAtivo = html.getAttribute('data-contexto') == 'foco';
+		if (focoAtivo) {
+			const evento = new CustomEvent ('focoFinalizado')
+			document.dispatchEvent(evento);
+		}
 		zerar();
 		return;
 	}
@@ -112,9 +117,9 @@ musicaFocoInput.addEventListener('change', () => {
 botaoStartPause.addEventListener('click', iniciarOuPausar);
 
 // Configuração dos botões de contexto
-configurarBotao(botaoFoco, 'foco', 1500);
-configurarBotao(botaoCurto, 'descanso-curto', 300);
-configurarBotao(botaoLongo, 'descanso-longo', 900);
+configurarBotao(botaoFoco, 'foco', 30);
+configurarBotao(botaoCurto, 'descanso-curto', 10);
+configurarBotao(botaoLongo, 'descanso-longo', 15);
 
 // ----- Inicialização -----
 mostrarTempo();
